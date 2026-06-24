@@ -6,5 +6,5 @@ import react from '@vitejs/plugin-react'
 // If you use a custom domain at the root, change this back to "/".
 export default defineConfig({
   plugins: [react()],
-  base: '/Acquisition-Performance-Income/',
+  base: '/Assets-Properties-Investments/',
 })

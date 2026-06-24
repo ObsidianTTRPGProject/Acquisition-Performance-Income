@@ -80,10 +80,13 @@ run the migration once in the Supabase SQL Editor:
 7. SQL Editor → paste [`supabase/migration-07-pool.sql`](supabase/migration-07-pool.sql) → Run (shared contributions pool).
 8. SQL Editor → paste [`supabase/migration-08-pool-schedules.sql`](supabase/migration-08-pool-schedules.sql) → Run (recurring pool contributions).
 9. SQL Editor → paste [`supabase/migration-09-depreciation.sql`](supabase/migration-09-depreciation.sql) → Run (depreciation assets).
+10. SQL Editor → paste [`supabase/migration-10-bill-reference.sql`](supabase/migration-10-bill-reference.sql) → Run (bill reference number, for PDF import).
+11. SQL Editor → paste [`supabase/migration-11-voting.sql`](supabase/migration-11-voting.sql) → Run (per-property voting).
+12. SQL Editor → paste [`supabase/migration-12-bill-invoice.sql`](supabase/migration-12-bill-invoice.sql) → Run (bill invoice number).
 
-> A new package (`xlsx`, for Excel export) was added — if running locally, `npm install` again first.
+> New packages were added (`xlsx` for Excel export, `pdfjs-dist` for PDF bill import, `tesseract.js` for OCR of photographed bills) — if running locally, `npm install` again first.
 
-**For password reset:** in Supabase → Authentication → URL Configuration, set the **Site URL** to your live site, and add it under **Redirect URLs** too, e.g. `https://obsidianttrpgproject.github.io/Acquisition-Performance-Income/`. Without this, the reset email link won't return to the app correctly.
+**For password reset:** in Supabase → Authentication → URL Configuration, set the **Site URL** to your live site, and add it under **Redirect URLs** too, e.g. `https://obsidianttrpgproject.github.io/Assets-Properties-Investments/`. Without this, the reset email link won't return to the app correctly.
 
 Because a new package (Leaflet) was added, re-install before running locally:
 
