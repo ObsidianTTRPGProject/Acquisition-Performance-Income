@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <script>
+      // SPA fallback for GitHub Pages: rewrite the path into a query string
+      // so index.html can restore it. Keeps deep links / refresh working.
+      var seg = 1; // number of path segments in the base (e.g. /property-manager/)
+      var l = window.location;
+      var path = l.pathname.split('/').slice(0, 1 + seg).join('/');
+      var rest = l.pathname.slice(path.length).replace(/^\//, '');
+      l.replace(
+        l.protocol + '//' + l.host + path + '/?/' +
+          rest.replace(/&/g, '~and~') +
+          (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+          l.hash
+      );
+    </script>
+  </head>
+  <body></body>
+</html>
