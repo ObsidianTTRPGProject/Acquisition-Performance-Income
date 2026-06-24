@@ -15,12 +15,13 @@ export default function Home() {
     setLoading(true)
     const todayStr = new Date().toISOString().slice(0, 10)
 
-    const [props, billsRes, tasksRes, reqRes, tenanciesRes] = await Promise.all([
+    const [props, billsRes, tasksRes, reqRes, tenanciesRes, votesRes] = await Promise.all([
       supabase.from('properties').select('id, nickname'),
       supabase.from('bills').select('id, property_id, description, amount, due_date, status').neq('status', 'paid'),
       supabase.from('tasks').select('id, property_id, title, status, priority, created_at').not('status', 'in', '("resolved","closed")'),
       supabase.from('requests').select('id, property_id, title, status, created_at').not('status', 'in', '("resolved","closed")'),
       supabase.from('tenancies').select('id, property_id'),
+      supabase.from('votes').select('id, property_id, title, status, created_at').neq('status', 'closed'),
     ])
     const nameOf = {}
     ;(props.data || []).forEach((p) => (nameOf[p.id] = p.nickname))
@@ -77,16 +78,27 @@ export default function Home() {
         sort: 3,
       })
     })
+    ;(votesRes.data || []).forEach((v) => {
+      actions.push({
+        kind: 'Open vote',
+        severity: 'amber',
+        title: v.title,
+        sub: `${nameOf[v.property_id] || 'Property'} · needs your decision`,
+        link: `/properties/${v.property_id}`,
+        sort: 2,
+      })
+    })
     actions.sort((a, b) => a.sort - b.sort)
     setPriority(actions)
 
     // ---- Recent changes ----
-    const [rp, rt, rb, rr, rl] = await Promise.all([
+    const [rp, rt, rb, rr, rl, rv] = await Promise.all([
       supabase.from('properties').select('id, nickname, created_at').order('created_at', { ascending: false }).limit(8),
       supabase.from('tasks').select('id, property_id, title, created_at').order('created_at', { ascending: false }).limit(8),
       supabase.from('bills').select('id, property_id, description, created_at').order('created_at', { ascending: false }).limit(8),
       supabase.from('requests').select('id, property_id, title, created_at').order('created_at', { ascending: false }).limit(8),
       supabase.from('tenant_logs').select('id, tenancy_id, note, created_at').order('created_at', { ascending: false }).limit(8),
+      supabase.from('votes').select('id, property_id, title, result, status, created_at').order('created_at', { ascending: false }).limit(8),
     ])
     const changes = []
     ;(rp.data || []).forEach((x) => changes.push({ icon: '🏠', label: `Property added: ${x.nickname}`, link: `/properties/${x.id}`, at: x.created_at }))
@@ -94,6 +106,7 @@ export default function Home() {
     ;(rb.data || []).forEach((x) => changes.push({ icon: '💸', label: `Bill: ${x.description}`, link: `/properties/${x.property_id}`, at: x.created_at }))
     ;(rr.data || []).forEach((x) => changes.push({ icon: '📩', label: `Request: ${x.title}`, link: `/properties/${x.property_id}`, at: x.created_at }))
     ;(rl.data || []).forEach((x) => changes.push({ icon: '📝', label: `Tenant log: ${(x.note || '').slice(0, 40)}`, link: `/properties/${tenancyProp[x.tenancy_id] || ''}`, at: x.created_at }))
+    ;(rv.data || []).forEach((x) => changes.push({ icon: '🗳️', label: `Vote ${x.status === 'closed' ? `closed (${x.result})` : 'raised'}: ${x.title}`, link: `/properties/${x.property_id}`, at: x.created_at }))
     changes.sort((a, b) => new Date(b.at) - new Date(a.at))
     setRecent(changes.slice(0, 12))
 
