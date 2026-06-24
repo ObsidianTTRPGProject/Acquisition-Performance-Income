@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../context/AuthContext'
 import NotificationBell from './NotificationBell'
+import { APP_VERSION } from '../lib/version'
 
 const NAV = [
   ['/', 'Dashboard', true],
@@ -85,6 +86,9 @@ export default function Layout({ children }) {
         )}
       </header>
       <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+      <footer className="mx-auto max-w-6xl px-4 py-6 text-center text-xs text-slate-400">
+        <Link to="/changelog" className="hover:text-brand-600">API v{APP_VERSION} · Changelog</Link>
+      </footer>
     </div>
   )
 }

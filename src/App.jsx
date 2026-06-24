@@ -12,6 +12,7 @@ import Financials from './pages/Financials'
 import MapView from './pages/MapView'
 import Pool from './pages/Pool'
 import Profile from './pages/Profile'
+import Changelog from './pages/Changelog'
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
                 <Route path="/financials" element={<Financials />} />
                 <Route path="/pool" element={<Pool />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/changelog" element={<Changelog />} />
               </Routes>
             </Layout>
           </ProtectedRoute>
