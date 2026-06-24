@@ -39,6 +39,7 @@ export default function Layout({ children }) {
             <NavLink to="/map" className={linkClass}>Map</NavLink>
             <NavLink to="/contacts" className={linkClass}>Contacts</NavLink>
             <NavLink to="/financials" className={linkClass}>Financials</NavLink>
+            <NavLink to="/pool" className={linkClass}>Pool</NavLink>
             <NavLink to="/profile" className={linkClass}>Profile</NavLink>
             {session && <NotificationBell />}
             {session && (

@@ -184,6 +184,30 @@ create table if not exists tenant_logs (
   created_at  timestamptz default now()
 );
 
+-- ---------- SHARED POOL (contributions + spending) ----------------------------
+create table if not exists pool_contributions (
+  id              uuid primary key default gen_random_uuid(),
+  member_id       uuid references profiles(id) on delete set null,
+  member_name     text,
+  amount          numeric(12,2) not null,
+  contributed_on  date default current_date,
+  note            text,
+  created_at      timestamptz default now()
+);
+create table if not exists pool_expenses (
+  id           uuid primary key default gen_random_uuid(),
+  description  text not null,
+  amount       numeric(12,2) not null,
+  spent_on     date default current_date,
+  property_id  uuid references properties(id) on delete set null,
+  note         text,
+  created_at   timestamptz default now()
+);
+alter table pool_contributions enable row level security;
+alter table pool_expenses enable row level security;
+create policy pool_contributions_auth on pool_contributions for all to authenticated using (true) with check (true);
+create policy pool_expenses_auth on pool_expenses for all to authenticated using (true) with check (true);
+
 -- ---------- CASH FLOW ---------------------------------------------------------
 -- Manual one-off entries (purchase, sale, misc income). Bills and rent payments
 -- are also aggregated for reporting, so this table is for everything else.

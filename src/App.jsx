@@ -10,6 +10,7 @@ import PropertyDetail from './pages/PropertyDetail'
 import Contacts from './pages/Contacts'
 import Financials from './pages/Financials'
 import MapView from './pages/MapView'
+import Pool from './pages/Pool'
 import Profile from './pages/Profile'
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
                 <Route path="/map" element={<MapView />} />
                 <Route path="/contacts" element={<Contacts />} />
                 <Route path="/financials" element={<Financials />} />
+                <Route path="/pool" element={<Pool />} />
                 <Route path="/profile" element={<Profile />} />
               </Routes>
             </Layout>
