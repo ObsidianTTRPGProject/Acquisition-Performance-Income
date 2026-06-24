@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
 import Login from './pages/Login'
+import ResetPassword from './pages/ResetPassword'
+import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import AddProperty from './pages/AddProperty'
 import PropertyDetail from './pages/PropertyDetail'
@@ -14,13 +16,15 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/reset" element={<ResetPassword />} />
       <Route
         path="/*"
         element={
           <ProtectedRoute>
             <Layout>
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/properties" element={<Dashboard />} />
                 <Route path="/properties/new" element={<AddProperty />} />
                 <Route path="/properties/:id" element={<PropertyDetail />} />
                 <Route path="/map" element={<MapView />} />

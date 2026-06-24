@@ -31,11 +31,11 @@ export default function PropertyDetail() {
   }
 
   if (loading) return <p className="text-slate-400">Loading…</p>
-  if (!property) return <p className="text-slate-500">Property not found. <Link className="text-brand-600" to="/">Back</Link></p>
+  if (!property) return <p className="text-slate-500">Property not found. <Link className="text-brand-600" to="/properties">Back</Link></p>
 
   return (
     <div>
-      <Link to="/" className="mb-3 inline-block text-sm text-slate-500 hover:text-slate-700">← All properties</Link>
+      <Link to="/properties" className="mb-3 inline-block text-sm text-slate-500 hover:text-slate-700">← All properties</Link>
       <div className="mb-5 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">{property.nickname}</h1>

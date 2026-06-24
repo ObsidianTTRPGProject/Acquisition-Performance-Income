@@ -28,6 +28,8 @@ export async function getCashflow(propertyId = null) {
   ;(bills || []).forEach((b) => {
     if (b.status === 'paid' || b.paid_date) {
       events.push({
+        id: b.id,
+        source: 'bill',
         property_id: b.property_id,
         date: b.paid_date || b.due_date || b.issue_date,
         direction: 'expense',
@@ -40,6 +42,8 @@ export async function getCashflow(propertyId = null) {
   ;(payments || []).forEach((p) => {
     if (Number(p.amount_paid) > 0) {
       events.push({
+        id: p.id,
+        source: 'rent',
         property_id: tenancyToProp[p.tenancy_id],
         date: p.paid_date || p.due_date,
         direction: 'income',
@@ -51,6 +55,8 @@ export async function getCashflow(propertyId = null) {
   })
   ;(manual || []).forEach((m) => {
     events.push({
+      id: m.id,
+      source: 'manual',
       property_id: m.property_id,
       date: m.entry_date,
       direction: m.direction,

@@ -6,9 +6,14 @@ import { money, dateStr } from '../../lib/format'
 
 export default function FinancesTab({ propertyId }) {
   const [events, setEvents] = useState([])
-  const [adding, setAdding] = useState(false)
-  const [form, setForm] = useState({ entry_date: '', direction: 'expense', amount: '', category: '', description: '' })
+  const [showForm, setShowForm] = useState(false)
+  const [editingId, setEditingId] = useState(null)
+  const [form, setForm] = useState(blank())
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
+
+  function blank() {
+    return { entry_date: '', direction: 'expense', amount: '', category: '', description: '' }
+  }
 
   useEffect(() => { load() }, [propertyId])
 
@@ -16,13 +21,30 @@ export default function FinancesTab({ propertyId }) {
     setEvents(await getCashflow(propertyId))
   }
 
-  async function add() {
-    if (!form.amount || !form.entry_date) return
-    await supabase.from('cashflow').insert({
-      property_id: propertyId, ...form, amount: Number(form.amount),
+  function startAdd() { setForm(blank()); setEditingId(null); setShowForm(true) }
+  function startEdit(ev) {
+    setForm({
+      entry_date: ev.date || '', direction: ev.direction, amount: ev.amount ?? '',
+      category: ev.category === 'other' ? '' : ev.category || '', description: ev.description || '',
     })
-    setForm({ entry_date: '', direction: 'expense', amount: '', category: '', description: '' })
-    setAdding(false); load()
+    setEditingId(ev.id); setShowForm(true)
+  }
+
+  async function save() {
+    if (!form.amount || !form.entry_date) return
+    const payload = {
+      property_id: propertyId, entry_date: form.entry_date, direction: form.direction,
+      amount: Number(form.amount), category: form.category, description: form.description,
+    }
+    if (editingId) await supabase.from('cashflow').update(payload).eq('id', editingId)
+    else await supabase.from('cashflow').insert(payload)
+    setForm(blank()); setEditingId(null); setShowForm(false); load()
+  }
+
+  async function del(ev) {
+    if (!confirm('Delete this manual entry? This cannot be undone.')) return
+    await supabase.from('cashflow').delete().eq('id', ev.id)
+    load()
   }
 
   const income = events.filter((e) => e.direction === 'income').reduce((s, e) => s + e.amount, 0)
@@ -40,12 +62,12 @@ export default function FinancesTab({ propertyId }) {
 
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-medium">Cash flow ledger</h2>
-        <Button onClick={() => setAdding(!adding)}>{adding ? 'Close' : '+ Manual entry'}</Button>
+        <Button onClick={() => (showForm ? setShowForm(false) : startAdd())}>{showForm ? 'Close' : '+ Manual entry'}</Button>
       </div>
 
-      {adding && (
+      {showForm && (
         <Card className="mb-5 space-y-3 p-4">
-          <p className="text-sm text-slate-500">For one-offs like purchase, sale proceeds or misc income. Bills and rent are pulled in automatically.</p>
+          <p className="text-sm text-slate-500">{editingId ? 'Edit manual entry.' : 'For one-offs like purchase, sale proceeds or misc income. Bills and rent are pulled in automatically.'}</p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
             <Input type="date" value={form.entry_date} onChange={set('entry_date')} />
             <Select value={form.direction} onChange={set('direction')}>
@@ -55,7 +77,10 @@ export default function FinancesTab({ propertyId }) {
             <Input placeholder="Category" value={form.category} onChange={set('category')} />
             <Input placeholder="Description" value={form.description} onChange={set('description')} />
           </div>
-          <Button onClick={add}>Add entry</Button>
+          <div className="flex gap-2">
+            <Button onClick={save}>{editingId ? 'Save changes' : 'Add entry'}</Button>
+            <Button variant="secondary" onClick={() => { setShowForm(false); setEditingId(null) }}>Cancel</Button>
+          </div>
         </Card>
       )}
 
@@ -83,15 +108,23 @@ export default function FinancesTab({ propertyId }) {
       ) : (
         <Card className="overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-left text-slate-500"><tr><th className="px-4 py-2">Date</th><th className="px-4 py-2">Description</th><th className="px-4 py-2">Category</th><th className="px-4 py-2 text-right">Amount</th></tr></thead>
+            <thead className="bg-slate-50 text-left text-slate-500"><tr><th className="px-4 py-2">Date</th><th className="px-4 py-2">Description</th><th className="px-4 py-2">Source</th><th className="px-4 py-2 text-right">Amount</th><th className="px-4 py-2"></th></tr></thead>
             <tbody>
               {sorted.map((e, i) => (
-                <tr key={i} className="border-t border-slate-100">
+                <tr key={e.source + (e.id || i)} className="border-t border-slate-100">
                   <td className="px-4 py-2 text-slate-500">{dateStr(e.date)}</td>
                   <td className="px-4 py-2">{e.description}</td>
-                  <td className="px-4 py-2 text-slate-500">{e.category}</td>
+                  <td className="px-4 py-2 text-xs text-slate-400">{e.source === 'manual' ? 'manual' : e.source === 'bill' ? 'bill' : 'rent'} · {e.category}</td>
                   <td className={`px-4 py-2 text-right font-medium ${e.direction === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                     {e.direction === 'income' ? '+' : '−'}{money(e.amount)}
+                  </td>
+                  <td className="px-4 py-2">
+                    {e.source === 'manual' && (
+                      <div className="flex gap-2 text-xs">
+                        <button onClick={() => startEdit(e)} className="text-brand-600 hover:underline">Edit</button>
+                        <button onClick={() => del(e)} className="text-red-500 hover:underline">Delete</button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}

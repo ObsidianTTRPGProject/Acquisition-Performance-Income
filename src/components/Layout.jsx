@@ -1,6 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../context/AuthContext'
+import NotificationBell from './NotificationBell'
 
 export default function Layout({ children }) {
   const { session } = useAuth()
@@ -23,35 +24,25 @@ export default function Layout({ children }) {
           <Link to="/" className="flex items-center gap-2">
             <img
               src={`${import.meta.env.BASE_URL}logo.png`}
-              alt="API — Assets, Properties & Investments"
+              alt="API"
               className="h-10 w-auto"
               onError={(e) => {
                 e.currentTarget.style.display = 'none'
                 e.currentTarget.nextSibling.style.display = 'inline'
               }}
             />
-            <span style={{ display: 'none' }} className="text-lg font-semibold text-brand-700">
-              API
-            </span>
+            <span style={{ display: 'none' }} className="text-lg font-semibold text-brand-700">API</span>
           </Link>
           <nav className="flex items-center gap-1">
-            <NavLink to="/" end className={linkClass}>
-              Properties
-            </NavLink>
-            <NavLink to="/map" className={linkClass}>
-              Map
-            </NavLink>
-            <NavLink to="/contacts" className={linkClass}>
-              Contacts
-            </NavLink>
-            <NavLink to="/financials" className={linkClass}>
-              Financials
-            </NavLink>
-            <NavLink to="/profile" className={linkClass}>
-              Profile
-            </NavLink>
+            <NavLink to="/" end className={linkClass}>Dashboard</NavLink>
+            <NavLink to="/properties" className={linkClass}>Properties</NavLink>
+            <NavLink to="/map" className={linkClass}>Map</NavLink>
+            <NavLink to="/contacts" className={linkClass}>Contacts</NavLink>
+            <NavLink to="/financials" className={linkClass}>Financials</NavLink>
+            <NavLink to="/profile" className={linkClass}>Profile</NavLink>
+            {session && <NotificationBell />}
             {session && (
-              <button onClick={logout} className="ml-2 rounded-lg px-3 py-2 text-sm text-slate-500 hover:bg-slate-100">
+              <button onClick={logout} className="ml-1 rounded-lg px-3 py-2 text-sm text-slate-500 hover:bg-slate-100">
                 Sign out
               </button>
             )}

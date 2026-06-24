@@ -164,6 +164,18 @@ create table if not exists requests (
   created_at   timestamptz default now()
 );
 
+-- ---------- NOTIFICATION READ-STATE -------------------------------------------
+create table if not exists notification_reads (
+  id                uuid primary key default gen_random_uuid(),
+  user_id           uuid references auth.users(id) on delete cascade,
+  notification_key  text not null,
+  read_at           timestamptz default now(),
+  unique (user_id, notification_key)
+);
+alter table notification_reads enable row level security;
+create policy "manage own notification reads" on notification_reads for all to authenticated
+  using (user_id = auth.uid()) with check (user_id = auth.uid());
+
 -- ---------- TENANT LOGS (feedback / concerns) ---------------------------------
 create table if not exists tenant_logs (
   id          uuid primary key default gen_random_uuid(),

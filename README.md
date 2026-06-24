@@ -76,6 +76,9 @@ run the migration once in the Supabase SQL Editor:
 3. SQL Editor → paste [`supabase/migration-03-users-and-assignment.sql`](supabase/migration-03-users-and-assignment.sql) → Run (team member list + assign tasks to users).
 4. SQL Editor → paste [`supabase/migration-04-tenant-log.sql`](supabase/migration-04-tenant-log.sql) → Run (tenant feedback/concerns log).
 5. SQL Editor → paste [`supabase/migration-05-profile-fields.sql`](supabase/migration-05-profile-fields.sql) → Run (profile contact number + self-service profile editing).
+6. SQL Editor → paste [`supabase/migration-06-notifications.sql`](supabase/migration-06-notifications.sql) → Run (notification read-state).
+
+**For password reset:** in Supabase → Authentication → URL Configuration, set the **Site URL** to your live site, and add it under **Redirect URLs** too, e.g. `https://obsidianttrpgproject.github.io/Acquisition-Performance-Income/`. Without this, the reset email link won't return to the app correctly.
 
 Because a new package (Leaflet) was added, re-install before running locally:
 
