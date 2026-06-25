@@ -84,6 +84,12 @@ export default function Admin() {
     try { await adminCall('create_company', { name: newCompany.trim() }); setNewCompany(''); load() }
     catch (e) { alert('Failed: ' + e.message) }
   }
+  async function renameCompany(c) {
+    const name = prompt(`Rename "${c.name}" to:`, c.name)
+    if (!name || !name.trim() || name.trim() === c.name) return
+    try { await adminCall('rename_company', { company_id: c.id, name: name.trim() }); load() }
+    catch (e) { alert('Failed: ' + e.message) }
+  }
 
   if (!isCompanyAdmin) {
     return <Card className="p-8 text-center text-slate-500">You don’t have access to the admin area.</Card>
@@ -104,9 +110,12 @@ export default function Admin() {
       {isSuperAdmin && (
         <Card className="p-5">
           <h2 className="mb-3 font-medium">Companies</h2>
-          <div className="mb-3 flex flex-wrap gap-2">
+          <div className="mb-3 space-y-1">
             {companies.map((c) => (
-              <Badge key={c.id} color="slate">{c.name}</Badge>
+              <div key={c.id} className="flex items-center justify-between rounded-lg border border-slate-100 px-3 py-2">
+                <span className="text-sm font-medium text-slate-700">🏢 {c.name}</span>
+                <button onClick={() => renameCompany(c)} className="text-xs text-brand-600 hover:underline">Rename</button>
+              </div>
             ))}
             {companies.length === 0 && <span className="text-sm text-slate-400">No companies yet.</span>}
           </div>
