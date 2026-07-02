@@ -174,6 +174,10 @@ create table if not exists votes (
   description  text,
   status       text default 'open',
   result       text,
+  kind         text default 'question',   -- question (yes/no) | options (pre-defined list)
+  options      jsonb,                     -- ["Option A", ...] when kind = options
+  allow_abstain boolean default true,
+  multi_select boolean default false,
   created_by   uuid references profiles(id) on delete set null,
   created_at   timestamptz default now()
 );
@@ -183,6 +187,7 @@ create table if not exists vote_ballots (
   member_id    uuid references profiles(id) on delete set null,
   member_name  text,
   choice       text not null,
+  choices      jsonb,                     -- all selections for multi-select votes
   comment      text,
   created_at   timestamptz default now(),
   unique (vote_id, member_id)

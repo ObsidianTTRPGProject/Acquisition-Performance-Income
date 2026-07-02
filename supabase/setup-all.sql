@@ -127,15 +127,21 @@ create table if not exists votes (
   id uuid primary key default gen_random_uuid(),
   property_id uuid references properties(id) on delete cascade,
   title text not null, description text, status text default 'open', result text,
+  kind text default 'question', options jsonb, allow_abstain boolean default true, multi_select boolean default false,
   created_by uuid references profiles(id) on delete set null, created_at timestamptz default now()
 );
+alter table votes add column if not exists kind text default 'question';
+alter table votes add column if not exists options jsonb;
+alter table votes add column if not exists allow_abstain boolean default true;
+alter table votes add column if not exists multi_select boolean default false;
 create table if not exists vote_ballots (
   id uuid primary key default gen_random_uuid(),
   vote_id uuid references votes(id) on delete cascade,
   member_id uuid references profiles(id) on delete set null,
-  member_name text, choice text not null, comment text, created_at timestamptz default now(),
+  member_name text, choice text not null, choices jsonb, comment text, created_at timestamptz default now(),
   unique (vote_id, member_id)
 );
+alter table vote_ballots add column if not exists choices jsonb;
 alter table votes enable row level security;
 alter table vote_ballots enable row level security;
 drop policy if exists votes_auth on votes;

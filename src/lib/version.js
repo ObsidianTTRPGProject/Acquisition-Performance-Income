@@ -7,9 +7,20 @@
 //   major (x.0.0) = big or breaking changes
 // The version shows in the footer and links to the Changelog page.
 
-export const APP_VERSION = '1.1.0'
+export const APP_VERSION = '1.2.0'
 
 export const CHANGELOG = [
+  {
+    version: '1.2.0',
+    date: '2026-07-02',
+    title: 'Vote on pre-defined options',
+    changes: [
+      'Votes can now be either a yes/no question (as before) or a choice between pre-defined options (e.g. pick a builder from a shortlist).',
+      'Option votes are configured when raised: the list of options, whether abstaining is allowed, and whether members may select multiple options.',
+      'Option votes show live per-option counts; closing records the winning option (or Tied) as the result.',
+      'Database update required: run supabase/migration-12-vote-options.sql (or setup-all.sql) in the Supabase SQL Editor.',
+    ],
+  },
   {
     version: '1.1.0',
     date: '2026-06-25',
