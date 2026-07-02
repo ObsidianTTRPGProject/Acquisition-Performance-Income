@@ -7,9 +7,21 @@
 //   major (x.0.0) = big or breaking changes
 // The version shows in the footer and links to the Changelog page.
 
-export const APP_VERSION = '1.2.0'
+export const APP_VERSION = '1.3.0'
 
 export const CHANGELOG = [
+  {
+    version: '1.3.0',
+    date: '2026-07-03',
+    title: 'Photo drag-and-drop imports & vote option suggestions',
+    changes: [
+      'Photos: drag images straight into the Photos tab — from your computer or directly from another website (e.g. an image in a Facebook chat).',
+      'Photos: import many photos at once, tagging the whole batch with a date, status, and description.',
+      'Photos: group the gallery by import batch, date, or status when reviewing.',
+      'Voting: any member can suggest and add new options to an open option-vote.',
+      'Setup: run supabase/migration-13-photo-batches.sql (or setup-all.sql), and deploy the new fetch-image Edge Function (supabase/functions/fetch-image) to enable dragging images in from other websites.',
+    ],
+  },
   {
     version: '1.2.0',
     date: '2026-07-02',

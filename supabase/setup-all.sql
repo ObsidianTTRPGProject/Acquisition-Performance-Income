@@ -149,6 +149,9 @@ create policy votes_auth on votes for all to authenticated using (true) with che
 drop policy if exists vote_ballots_auth on vote_ballots;
 create policy vote_ballots_auth on vote_ballots for all to authenticated using (true) with check (true);
 
+-- ---------- PHOTO IMPORT BATCHES -----------------------------------------------
+alter table photos add column if not exists batch_id uuid;
+
 -- =============================================================================
 -- Done. Re-run this any time the app is updated to add new tables/columns.
 -- =============================================================================

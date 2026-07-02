@@ -24,6 +24,7 @@ export default function VotingTab({ propertyId }) {
   const [myName, setMyName] = useState('')
   const [adding, setAdding] = useState(false)
   const [form, setForm] = useState(emptyForm)
+  const [optDrafts, setOptDrafts] = useState({}) // voteId -> draft new-option text
 
   useEffect(() => { load() }, [propertyId, userId])
 
@@ -74,6 +75,22 @@ export default function VotingTab({ propertyId }) {
     }
     notifyEmail({ kind: 'vote_raised', title: form.title, description: form.description, propertyId })
     setForm(emptyForm); setAdding(false); load()
+  }
+
+  // Any member can add an option to an open option-vote. Re-read the current
+  // list first so two members adding at once don't clobber each other.
+  async function addOptionTo(vote) {
+    const text = (optDrafts[vote.id] || '').trim()
+    if (!text) return
+    const { data: fresh } = await supabase.from('votes').select('options').eq('id', vote.id).single()
+    const current = fresh?.options || vote.options || []
+    if (current.some((o) => o.toLowerCase() === text.toLowerCase()) || text.toLowerCase() === ABSTAIN) {
+      alert('That option already exists.'); return
+    }
+    const { error } = await supabase.from('votes').update({ options: [...current, text] }).eq('id', vote.id)
+    if (error) { alert('Could not add the option: ' + error.message); return }
+    setOptDrafts((d) => ({ ...d, [vote.id]: '' }))
+    load()
   }
 
   async function delVote(v) {
@@ -255,6 +272,16 @@ export default function VotingTab({ propertyId }) {
                       )
                     })}
                     {open && mine.length > 0 && <p className="text-xs text-slate-400">recorded as {mine.join(', ')}</p>}
+                    {open && (
+                      <div className="flex items-center gap-2 pt-1">
+                        <div className="max-w-xs flex-1">
+                          <Input value={optDrafts[v.id] || ''} onChange={(e) => setOptDrafts((d) => ({ ...d, [v.id]: e.target.value }))}
+                            onKeyDown={(e) => { if (e.key === 'Enter') addOptionTo(v) }}
+                            placeholder="Suggest another option…" />
+                        </div>
+                        <button type="button" onClick={() => addOptionTo(v)} className="text-sm text-brand-600 hover:underline">Add option</button>
+                      </div>
+                    )}
                   </div>
                 )}
 

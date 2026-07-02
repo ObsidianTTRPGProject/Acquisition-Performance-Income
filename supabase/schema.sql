@@ -66,6 +66,7 @@ create table if not exists photos (
   caption      text,
   category     text default 'progress',          -- progress, issue, general
   taken_on     date,
+  batch_id     uuid,                             -- photos imported together share one
   created_at   timestamptz default now()
 );
 

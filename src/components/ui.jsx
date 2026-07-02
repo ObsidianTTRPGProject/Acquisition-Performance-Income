@@ -1,7 +1,7 @@
 // Small reusable UI primitives to keep pages tidy.
 
-export function Card({ children, className = '' }) {
-  return <div className={`rounded-xl border border-slate-200 bg-white shadow-sm ${className}`}>{children}</div>
+export function Card({ children, className = '', ...props }) {
+  return <div className={`rounded-xl border border-slate-200 bg-white shadow-sm ${className}`} {...props}>{children}</div>
 }
 
 export function Button({ children, variant = 'primary', className = '', ...props }) {
