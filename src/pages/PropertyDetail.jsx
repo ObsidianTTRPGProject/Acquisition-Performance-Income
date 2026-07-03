@@ -5,6 +5,7 @@ import { Badge, statusColor } from '../components/ui'
 import { money, dateStr } from '../lib/format'
 import OverviewTab from '../components/tabs/OverviewTab'
 import PhotosTab from '../components/tabs/PhotosTab'
+import DocumentsTab from '../components/tabs/DocumentsTab'
 import TasksTab from '../components/tabs/TasksTab'
 import BillsTab from '../components/tabs/BillsTab'
 import TenantsTab from '../components/tabs/TenantsTab'
@@ -13,7 +14,7 @@ import FinancesTab from '../components/tabs/FinancesTab'
 import DepreciationTab from '../components/tabs/DepreciationTab'
 import VotingTab from '../components/tabs/VotingTab'
 
-const TABS = ['Overview', 'Photos', 'Tasks', 'Bills', 'Tenants', 'Requests', 'Finances', 'Depreciation', 'Voting']
+const TABS = ['Overview', 'Photos', 'Documents', 'Tasks', 'Bills', 'Tenants', 'Requests', 'Finances', 'Depreciation', 'Voting']
 
 export default function PropertyDetail() {
   const { id } = useParams()
@@ -65,6 +66,7 @@ export default function PropertyDetail() {
 
       {tab === 'Overview' && <OverviewTab property={property} onChange={load} />}
       {tab === 'Photos' && <PhotosTab propertyId={id} />}
+      {tab === 'Documents' && <DocumentsTab propertyId={id} />}
       {tab === 'Tasks' && <TasksTab propertyId={id} />}
       {tab === 'Bills' && <BillsTab propertyId={id} />}
       {tab === 'Tenants' && <TenantsTab propertyId={id} />}

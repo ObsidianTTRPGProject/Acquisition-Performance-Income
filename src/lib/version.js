@@ -7,9 +7,20 @@
 //   major (x.0.0) = big or breaking changes
 // The version shows in the footer and links to the Changelog page.
 
-export const APP_VERSION = '1.3.0'
+export const APP_VERSION = '1.4.0'
 
 export const CHANGELOG = [
+  {
+    version: '1.4.0',
+    date: '2026-07-03',
+    title: 'Per-property documents',
+    changes: [
+      'New Documents tab on every property — store contracts, warranties, invoices and any other files.',
+      'Drag documents straight in (multi-file), give each a title, and tag the whole import with a date, tags, description, and an optional linked Contact.',
+      'Search and tag filters, inline editing of a document\u2019s details, and one-click downloads.',
+      'Database update required: run supabase/migration-14-documents.sql (or setup-all.sql) in the Supabase SQL Editor.',
+    ],
+  },
   {
     version: '1.3.0',
     date: '2026-07-03',

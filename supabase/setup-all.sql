@@ -152,6 +152,25 @@ create policy vote_ballots_auth on vote_ballots for all to authenticated using (
 -- ---------- PHOTO IMPORT BATCHES -----------------------------------------------
 alter table photos add column if not exists batch_id uuid;
 
+-- ---------- DOCUMENTS (contracts etc. per property) ----------------------------
+create table if not exists documents (
+  id           uuid primary key default gen_random_uuid(),
+  property_id  uuid references properties(id) on delete cascade,
+  contact_id   uuid references contacts(id) on delete set null,
+  title        text not null,
+  description  text,
+  tags         jsonb,
+  doc_date     date,
+  storage_path text not null,
+  file_name    text,
+  file_type    text,
+  file_size    bigint,
+  created_at   timestamptz default now()
+);
+alter table documents enable row level security;
+drop policy if exists documents_auth on documents;
+create policy documents_auth on documents for all to authenticated using (true) with check (true);
+
 -- =============================================================================
 -- Done. Re-run this any time the app is updated to add new tables/columns.
 -- =============================================================================

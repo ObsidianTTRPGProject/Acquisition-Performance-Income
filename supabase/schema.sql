@@ -346,3 +346,24 @@ begin
 end; $$;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users for each row execute function public.handle_new_user();
+
+-- =============================================================================
+-- DOCUMENTS (contracts, warranties, etc. per property)
+-- Stored in the private 'property-docs' bucket; optionally linked to a Contact.
+-- =============================================================================
+create table if not exists documents (
+  id           uuid primary key default gen_random_uuid(),
+  property_id  uuid references properties(id) on delete cascade,
+  contact_id   uuid references contacts(id) on delete set null,  -- optional
+  title        text not null,
+  description  text,
+  tags         jsonb,                    -- ["contract", "warranty", ...]
+  doc_date     date,                     -- document / added date
+  storage_path text not null,            -- path within the 'property-docs' bucket
+  file_name    text,
+  file_type    text,
+  file_size    bigint,
+  created_at   timestamptz default now()
+);
+alter table documents enable row level security;
+create policy documents_auth on documents for all to authenticated using (true) with check (true);
